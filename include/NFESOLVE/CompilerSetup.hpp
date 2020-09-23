@@ -1,0 +1,9 @@
+#ifndef COMPILERSETUPHEADERDEF
+#define COMPILERSETUPHEADERDER
+
+#if (defined(_OPENMP) && (_OPENMP >= 201107))
+  #undef  NFESOLVE_USE_OPENMP
+  #define NFESOLVE_USE_OPENMP
+#endif
+
+#endif
