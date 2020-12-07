@@ -30,7 +30,7 @@ class DelayRungeKutta32Solver : public DelayRungeKuttaSolver
   private:
 
     // Butcher tableau
-    const arma::mat ma = { {0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, {-1.0, 2.0, 0.0} };
+    const arma::mat ma = { {0.0, 0.0, 0.0}, {1.0 / 2.0, 0.0, 0.0}, {-1.0, 2.0, 0.0} };
     const arma::vec mb = { 1.0 / 6.0, 2.0 / 3.0, 1.0 / 6.0 };
     const arma::vec mc = { 0.0, 1.0 / 2.0, 1.0 };
     const arma::vec mbHat = { 1.0 - (1.0 / (2.0 * mc(1))), 1.0 / (2.0 * mc(1)), 0.0 };

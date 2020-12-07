@@ -19,7 +19,7 @@ class RungeKutta32Solver:public RungeKuttaSolver
 
     // Solution
     void Solve();
-    
+
     // Set tolerances
     void SetATol(const double aTol);
     void SetRTol(const double rTol);
@@ -30,7 +30,7 @@ class RungeKutta32Solver:public RungeKuttaSolver
   private:
 
     // Butcher tableau
-    const arma::mat ma = { {0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, {-1.0, 2.0, 0.0} };
+    const arma::mat ma = { {0.0, 0.0, 0.0}, {1.0 / 2.0, 0.0, 0.0}, {-1.0, 2.0, 0.0} };
     const arma::vec mb = { 1.0 / 6.0, 2.0 / 3.0, 1.0 / 6.0 };
     const arma::vec mc = { 0.0, 1.0 / 2.0, 1.0 };
     const arma::vec mbHat = { 1.0 - (1.0 / (2.0 * mc(1))), 1.0 / (2.0 * mc(1)), 0.0 };

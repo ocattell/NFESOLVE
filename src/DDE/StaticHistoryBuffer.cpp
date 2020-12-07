@@ -45,8 +45,12 @@ arma::vec StaticHistoryBuffer::ComputeDelayState(double time) const
 	}
 	else
 	{
-		int lowerInd = nearestInd;
-		if (mTimeBuffer(nearestInd) > time)
+        int lowerInd = nearestInd;
+		if (mTimeBuffer(lowerInd) == 0 && mTimeBuffer(mColStart) <= 1e-12 )
+		{
+			lowerInd = mColStart;
+		}
+		else if (mTimeBuffer(nearestInd) > time)
 		{
 			--lowerInd;
 			lowerInd = ((lowerInd % mBufferLength) + mBufferLength) % mBufferLength;
@@ -75,8 +79,12 @@ double StaticHistoryBuffer::ComputeDelayState(double time, arma::uword solIndex)
 	}
 	else
 	{
-		int lowerInd = nearestInd;
-		if (mTimeBuffer(nearestInd) > time)
+        int lowerInd = nearestInd;
+		if (mTimeBuffer(lowerInd) == 0 && mTimeBuffer(mColStart) <= 1e-12)
+		{
+			lowerInd = mColStart;
+		}
+		else if (mTimeBuffer(nearestInd) > time)
 		{
 			--lowerInd;
 			lowerInd = ((lowerInd % mBufferLength) + mBufferLength) % mBufferLength;
@@ -101,29 +109,33 @@ arma::vec StaticHistoryBuffer::ComputeDelayState(double time, arma::uvec solIndi
 
 	if (fabs(mTimeBuffer(nearestInd) - time) <= 1e-12)
 	{
-		delayState = mSolutionBuffer.submat(solIndices, nearestInd*arma::uvec(solIndices.n_elem, arma::fill::ones));
-	}
+        delayState = mSolutionBuffer.col(nearestInd);
+		delayState = delayState.elem(solIndices);	}
 	else
 	{
 		arma::uword lowerInd = nearestInd;
-		if (mTimeBuffer(nearestInd) > time)
+        if (mTimeBuffer(lowerInd) == 0 && mTimeBuffer(mColStart) <= 1e-12)
+		{
+			lowerInd = mColStart;
+		}
+		else if (mTimeBuffer(nearestInd) > time)
 		{
 			--lowerInd;
 			lowerInd = ((lowerInd % mBufferLength) + mBufferLength) % mBufferLength;
 		}
-		arma::uword upperInd = (lowerInd + 1) % mBufferLength;
+		int upperInd = (lowerInd + 1) % mBufferLength;
 
-		double h = mTimeBuffer(upperInd) - mTimeBuffer(lowerInd);
+        double h = mTimeBuffer(upperInd) - mTimeBuffer(lowerInd);
         DebugCheck(h<=1e-13, "StaticHistoryBuffer: ComputeDelayState(): h too small");
 		double ht = time - mTimeBuffer(lowerInd);
 		double theta = ht / h;
 
-		arma::vec lowerIndSol = mSolutionBuffer.submat(solIndices, lowerInd * arma::uvec(solIndices.n_elem, arma::fill::ones));
-		arma::vec upperIndSol = mSolutionBuffer.submat(solIndices, upperInd * arma::uvec(solIndices.n_elem, arma::fill::ones));
-		arma::vec lowerIndDer = mDerivativeBuffer.submat(solIndices, lowerInd * arma::uvec(solIndices.n_elem, arma::fill::ones));
-		arma::vec upperIndDer = mDerivativeBuffer.submat(solIndices, upperInd * arma::uvec(solIndices.n_elem, arma::fill::ones));
+		arma::vec lowerIndSol = mSolutionBuffer.col(lowerInd);
+		arma::vec upperIndSol = mSolutionBuffer.col(upperInd);
+		arma::vec lowerIndDer = mDerivativeBuffer.col(lowerInd);
+		arma::vec upperIndDer = mDerivativeBuffer.col(upperInd);
 
-		delayState = (1.0 - theta) * lowerIndSol + theta * upperIndSol + theta * (theta - 1.0) * ((1.0 - (2.0 * theta)) * (upperIndSol - lowerIndSol) + (theta - 1.0) * (mTimeBuffer(upperInd) - mTimeBuffer(lowerInd)) * lowerIndDer + theta * (mTimeBuffer(upperInd) - mTimeBuffer(lowerInd)) * upperIndDer);
+		delayState = (1.0 - theta) * lowerIndSol.elem(solIndices) + theta * upperIndSol.elem(solIndices) + theta * (theta - 1.0) * ((1.0 - (2.0 * theta)) * (upperIndSol.elem(solIndices) - lowerIndSol.elem(solIndices)) + (theta - 1.0) * (mTimeBuffer(upperInd) - mTimeBuffer(lowerInd)) * lowerIndDer.elem(solIndices) + theta * (mTimeBuffer(upperInd) - mTimeBuffer(lowerInd)) * upperIndDer.elem(solIndices));
 	}
 
 	return delayState;

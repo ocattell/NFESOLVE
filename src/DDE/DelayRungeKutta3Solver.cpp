@@ -20,7 +20,26 @@ DelayRungeKutta3Solver(DDEInterface& aDDESystem,
 
     // Initialise
     SetTimeInterval(initialTime, finalTime);
-    SetStepSize(stepSize);
+    mStepSize = stepSize;
+    while (mStepSize >= delays.min())
+    {
+      mStepSize /= 10.0;
+    }
+    if (mStepSize < mStepSizeMin)
+    {
+      mStepSizeMin = mStepSize/10.0;
+      if (mStepSize <= 1e-8)
+      {
+          mStepSizeMin = 1e-9;
+      }
+    }
+    if (mStepSize != stepSize)
+    {
+        std::cout << std::endl;
+        std::cout << "DelayRungeKutta3Solver: Step size must be smaller than min(delays)" << std::endl;
+        std::cout << "Automatically adjusting step size from " << stepSize << " to " << mStepSize << std::endl;
+        std::cout << std::endl;
+    }
     mpDDESystem = &aDDESystem;
     mpState = new arma::vec(initialState);
     mDelays = delays;
