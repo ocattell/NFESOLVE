@@ -55,6 +55,7 @@ arma::vec StaticHistoryBuffer::ComputeDelayState(double time) const
 			--lowerInd;
 			lowerInd = ((lowerInd % mBufferLength) + mBufferLength) % mBufferLength;
 		}
+
 		int upperInd = (lowerInd + 1) % mBufferLength;
 
 		double h = mTimeBuffer(upperInd) - mTimeBuffer(lowerInd);

@@ -66,5 +66,5 @@ void DelayRungeKutta3Solver::Solve()
   std::cout << "Output File " << mOutputFileName << std::endl;
   std::cout << "*****************************************************************" << std::endl;
 
-  DelayRungeKuttaAlgorithm(ma, mb, mb);
+  DelayRungeKuttaAlgorithm(ma, mb, mc);
 }
