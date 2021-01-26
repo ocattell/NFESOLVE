@@ -20,7 +20,7 @@ DelaySparseRungeKutta32Solver(SparseDDEInterface& aSparseDDESystem,
     // Initialise
     SetTimeInterval(initialTime, finalTime);
     mStepSize = 0.01;
-    while (mStepSize >= delays.min())
+    while (mStepSize > delays.min())
     {
         mStepSize /= 10.0;
     }

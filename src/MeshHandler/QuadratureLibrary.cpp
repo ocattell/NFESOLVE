@@ -96,6 +96,46 @@ namespace QuadratureLibrary
         }
     }
 
+    void GenerateSimpsonsRuleWeights(const Mesh& mesh, arma::vec& weights)
+    {
+        DebugCheck(mesh.GetDimension() != 1, "GenerateSimpsonsRuleWeights(): Quadrature rule not defined for dimension > 1");
+        DebugCheck(mesh.GetNumElementNodes() != 2, "GenerateSimpsonsRuleWeights(): Quadrature rule not defined for non-interval elements");
+        DebugCheck(!((mesh.GetGridPoints()).is_sorted("ascend",0)), "GenerateSimpsonsRuleWeights(): Mesh grid points must be in ascending order for this quadrature rule");
+
+        arma::uword NumElements = mesh.GetNumElements();
+        weights.zeros(mesh.GetNumGridPoints());
+
+        bool isNOdd = 0;
+        if (NumElements%2==1)
+        {
+            --NumElements;
+            isNOdd = 1;
+        }
+
+        for (arma::uword i=0; i<=(NumElements/2)-1; ++i)
+        {
+            arma::vec h = {((mesh.GetGridPoint(2*i+1))(0)-(mesh.GetGridPoint(2*i))(0)), ((mesh.GetGridPoint(2*i+2))(0)-(mesh.GetGridPoint(2*i+1))(0))};
+            double alpha = (2.0*pow(h(1),3)-pow(h(0),3)+3.0*h(0)*pow(h(1),2))/(6.0*h(1)*(h(1)+h(0)));
+            double beta = (pow(h(1),3)+pow(h(0),3)+3.0*h(1)*h(0)*(h(1)+h(0)))/(6.0*h(1)*h(0));
+            double gamma = (2.0*pow(h(0),3)-pow(h(1),3)+3.0*h(1)*pow(h(0),2))/(6.0*h(0)*(h(1)+h(0)));
+            weights(2*i+2) += alpha;
+            weights(2*i+1) += beta;
+            weights(2*i) += gamma;
+        }
+
+        if (isNOdd)
+        {
+            ++NumElements;
+            arma::vec h = {((mesh.GetGridPoint(NumElements-1))(0)-(mesh.GetGridPoint(NumElements-2))(0)), ((mesh.GetGridPoint(NumElements))(0)-(mesh.GetGridPoint(NumElements-1))(0))};
+            double alpha = (2.0*pow(h(1),2)+3.0*h(1)*h(0))/(6.0*(h(0)+h(1)));
+            double beta = (pow(h(1),2)+3.0*h(1)*h(0))/(6.0*h(0));
+            double gamma = (pow(h(1),3))/(6.0*h(0)*(h(0)+h(1)));
+            weights(NumElements) += alpha;
+            weights(NumElements-1) += beta;
+            weights(NumElements-2) += gamma;
+        }
+    }
+
     void GenerateGQPointsWeights(const Mesh& mesh, const int n, arma::mat& GQPoints, arma::vec& weights)
     {
 

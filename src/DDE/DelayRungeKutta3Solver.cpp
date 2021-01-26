@@ -2,8 +2,10 @@
 #include "DelayRungeKutta3Solver.hpp"
 
 #include <cassert>
+#include <chrono>
 #include <cmath>
 #include <iostream>
+#include <thread>
 
 DelayRungeKutta3Solver::
 DelayRungeKutta3Solver(DDEInterface& aDDESystem,
@@ -21,7 +23,8 @@ DelayRungeKutta3Solver(DDEInterface& aDDESystem,
     // Initialise
     SetTimeInterval(initialTime, finalTime);
     mStepSize = stepSize;
-    while (mStepSize >= delays.min())
+
+    while (mStepSize > delays.min())
     {
       mStepSize /= 10.0;
     }
@@ -39,6 +42,7 @@ DelayRungeKutta3Solver(DDEInterface& aDDESystem,
         std::cout << "DelayRungeKutta3Solver: Step size must be smaller than min(delays)" << std::endl;
         std::cout << "Automatically adjusting step size from " << stepSize << " to " << mStepSize << std::endl;
         std::cout << std::endl;
+	std::this_thread::sleep_for(std::chrono::seconds(2));
     }
     mpDDESystem = &aDDESystem;
     mpState = new arma::vec(initialState);

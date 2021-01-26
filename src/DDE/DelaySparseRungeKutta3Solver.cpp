@@ -2,9 +2,11 @@
 #include "DelaySparseRungeKutta3Solver.hpp"
 
 #include <cassert>
+#include <chrono>
 #include <cmath>
 #include <stdexcept>
 #include <iostream>
+#include <thread>
 
 DelaySparseRungeKutta3Solver::
 DelaySparseRungeKutta3Solver(SparseDDEInterface& aSparseDDESystem,
@@ -23,7 +25,7 @@ DelaySparseRungeKutta3Solver(SparseDDEInterface& aSparseDDESystem,
     // Initialise
     SetTimeInterval(initialTime, finalTime);
     mStepSize = stepSize;
-    while (mStepSize >= delays.min())
+    while (mStepSize > delays.min())
     {
       mStepSize /= 10.0;
     }
@@ -41,6 +43,7 @@ DelaySparseRungeKutta3Solver(SparseDDEInterface& aSparseDDESystem,
         std::cout << "DelaySparseRungeKutta3Solver: Step size must be smaller than min(delays)" << std::endl;
         std::cout << "Automatically adjusting step size from " << stepSize << " to " << mStepSize << std::endl;
         std::cout << std::endl;
+	std::this_thread::sleep_for(std::chrono::seconds(2));
     }
     mpSparseDDESystem = &aSparseDDESystem;
     mpState = new arma::vec(initialState);

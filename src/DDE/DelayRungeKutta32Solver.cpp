@@ -19,7 +19,7 @@ DelayRungeKutta32Solver(DDEInterface& aDDESystem,
     // Initialise
     SetTimeInterval(initialTime, finalTime);
     mStepSize = 0.01;
-    while (mStepSize >= delays.min())
+    while (mStepSize > delays.min())
     {
       mStepSize /= 10.0;
     }
