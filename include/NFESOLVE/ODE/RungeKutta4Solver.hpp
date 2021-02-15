@@ -19,6 +19,16 @@ public:
         const int saveGap = 1,
         const int printGap = 1);
 
+    RungeKutta4Solver(ODEInterface& anODESystem,
+        const arma::vec& initialState,
+        const double initialTime,
+        const double finalTime,
+        const double stepSize,
+        const std::string outputFileName,
+        const int saveGap,
+        const int printGap,
+        const arma::uvec& outputIndices);
+
     // Solution
     void Solve();
 

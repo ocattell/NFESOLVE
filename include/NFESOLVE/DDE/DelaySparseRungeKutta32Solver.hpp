@@ -20,6 +20,18 @@ class DelaySparseRungeKutta32Solver : public DelaySparseRungeKuttaSolver
         const int saveGap = 1,
         const int printGap = 1);
 
+    // Constructor
+    DelaySparseRungeKutta32Solver(SparseDDEInterface& aSparseDDESystem,
+        const arma::vec& initialState, const arma::vec& delays, const int numDelayEqs, const arma::umat& ZLocations,
+        const double initialTime,
+        const double finalTime,
+        const double ATol,
+        const double RTol,
+        const std::string outputFileName,
+        const int saveGap,
+        const int printGap,
+        const arma::uvec& outputIndices);
+
     // Solution
     void Solve();
 

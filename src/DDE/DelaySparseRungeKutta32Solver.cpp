@@ -42,6 +42,51 @@ DelaySparseRungeKutta32Solver(SparseDDEInterface& aSparseDDESystem,
     mOutputFileName = outputFileName;
     mSaveGap = saveGap;
     mPrintGap = printGap;
+    mOutputIndices = arma::regspace<arma::uvec>(0,initialState.n_elem-1);
+}
+
+DelaySparseRungeKutta32Solver::
+DelaySparseRungeKutta32Solver(SparseDDEInterface& aSparseDDESystem,
+    const arma::vec& initialState, const arma::vec& delays, const int numDelayEqs, const arma::umat& ZLocations,
+    const double initialTime, const double finalTime, const double ATol, const double RTol,
+    const std::string outputFileName,
+    const int saveGap,
+    const int printGap,
+    const arma::uvec& outputIndices)
+{
+    DebugCheck(ZLocations.n_rows != 2, "DelaySparseRungeKutta32Solver(): ZLocations should be of size 2xN");
+    DebugCheck(numDelayEqs > initialState.n_elem, "DelaySparseRungeKutta32Solver(): numDelayEquations is greater than the system size");
+    DebugCheck(delays.min() < 1e-9, "DelaySparseRungeKutta32Solver(): Minimum delay value too small");
+    DebugCheck(outputIndices.max() >= initialState.n_elem, "DelaySparseRungeKutta32Solver(): outputIndices value out of bounds. It should only contain values between 0 and " + std::to_string(initialState.n_elem - 1));
+    DebugCheck(outputIndices.is_empty(), "DelaySparseRungeKutta32Solver(): outputIndices must be non-empty");
+    DebugCheck(arma::any(outputIndices != arma::unique(outputIndices)), "DelaySparseRungeKutta32Solver(): outputIndices must only contain unique elements");
+
+    // Initialise
+    SetTimeInterval(initialTime, finalTime);
+    mStepSize = 0.01;
+    while (mStepSize > delays.min())
+    {
+        mStepSize /= 10.0;
+    }
+    if (mStepSize < mStepSizeMin)
+    {
+        mStepSizeMin = mStepSize/10.0;
+        if (mStepSize <= 1e-8)
+        {
+            mStepSizeMin = 1e-9;
+        }
+    }
+    mpSparseDDESystem = &aSparseDDESystem;
+    mpState = new arma::vec(initialState);
+    mDelays = delays;
+    mNumDelayEqs = numDelayEqs;
+    mZLocations = ZLocations;
+    mATol = ATol;
+    mRTol = RTol;
+    mOutputFileName = outputFileName;
+    mSaveGap = saveGap;
+    mPrintGap = printGap;
+    mOutputIndices = outputIndices;
 }
 
 DelaySparseRungeKutta32Solver::~DelaySparseRungeKutta32Solver()

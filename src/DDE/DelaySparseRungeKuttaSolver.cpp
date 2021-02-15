@@ -29,11 +29,11 @@ void DelaySparseRungeKuttaSolver::DelaySparseRungeKuttaAlgorithm(const arma::mat
     // Print and save initial condition
     if (mPrintGap > 0)
     {
-        PrintSolution(time, *mpState, true);
+        PrintSolution(time, (*mpState).elem(mOutputIndices), true);
     }
     if (mSaveGap > 0)
     {
-        SaveSolution(time, *mpState, true, mOutputFileName);
+        SaveSolution(time, (*mpState).elem(mOutputIndices), true, mOutputFileName);
     }
 
     // Runge kutta stages and auxiliary variables
@@ -110,11 +110,11 @@ void DelaySparseRungeKuttaSolver::DelaySparseRungeKuttaAlgorithm(const arma::mat
         // Eventually print and save new state
         if (mPrintGap > 0 && num_steps % mPrintGap == 0 || isFinalRun)
         {
-            PrintSolution(time, *mpState);
+            PrintSolution(time, (*mpState).elem(mOutputIndices));
         }
         if (mSaveGap > 0 && num_steps % mSaveGap == 0 || isFinalRun)
         {
-            SaveSolution(time, *mpState, false, mOutputFileName);
+            SaveSolution(time, (*mpState).elem(mOutputIndices), false, mOutputFileName);
         }
 
     }
@@ -153,11 +153,11 @@ void DelaySparseRungeKuttaSolver::AdaptiveDelaySparseRungeKuttaAlgorithm(const a
     // Print and save initial condition
     if (mPrintGap > 0)
     {
-        PrintSolution(time, *mpState, true);
+        PrintSolution(time, (*mpState).elem(mOutputIndices), true);
     }
     if (mSaveGap > 0)
     {
-        SaveSolution(time, *mpState, true, mOutputFileName);
+        SaveSolution(time, (*mpState).elem(mOutputIndices), true, mOutputFileName);
     }
 
     // Runge kutta stages and auxiliary variables
@@ -260,11 +260,11 @@ void DelaySparseRungeKuttaSolver::AdaptiveDelaySparseRungeKuttaAlgorithm(const a
         // Eventually print and save new state
         if (mPrintGap > 0 && num_steps % mPrintGap == 0 || isFinalRun)
         {
-            PrintSolution(time, *mpState);
+            PrintSolution(time, (*mpState).elem(mOutputIndices));
         }
         if (mSaveGap > 0 && num_steps % mSaveGap == 0 || isFinalRun)
         {
-            SaveSolution(time, *mpState, false, mOutputFileName);
+            SaveSolution(time, (*mpState).elem(mOutputIndices), false, mOutputFileName);
         }
 
     }

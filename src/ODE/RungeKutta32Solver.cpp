@@ -1,3 +1,4 @@
+#include "Debug.hpp"
 #include "RungeKutta32Solver.hpp"
 
 #include <iostream>
@@ -11,16 +12,44 @@ RungeKutta32Solver(ODEInterface& anODESystem,
     const int saveGap,
     const int printGap)
 {
-  // Initialise
-  SetTimeInterval(initialTime, finalTime);
-  SetStepSize(0.01);
-  mpODESystem = &anODESystem;
-  mpState = new arma::vec(initialState);
-  mATol = ATol;
-  mRTol = RTol;
-  mOutputFileName = outputFileName;
-  mSaveGap = saveGap;
-  mPrintGap = printGap;
+    // Initialise
+    SetTimeInterval(initialTime, finalTime);
+    SetStepSize(0.01);
+    mpODESystem = &anODESystem;
+    mpState = new arma::vec(initialState);
+    mATol = ATol;
+    mRTol = RTol;
+    mOutputFileName = outputFileName;
+    mSaveGap = saveGap;
+    mPrintGap = printGap;
+    mOutputIndices = arma::regspace<arma::uvec>(0,initialState.n_elem - 1);
+}
+
+// Constructor
+RungeKutta32Solver::
+RungeKutta32Solver(ODEInterface& anODESystem,
+    const arma::vec& initialState,
+    const double initialTime, const double finalTime, const double ATol, const double RTol,
+    const std::string outputFileName,
+    const int saveGap,
+    const int printGap,
+    const arma::uvec& outputIndices)
+{
+    DebugCheck(outputIndices.max() >= initialState.n_elem, "RungeKutta32Solver(): outputIndices value out of bounds. It should only contain values between 0 and " + std::to_string(initialState.n_elem - 1));
+    DebugCheck(outputIndices.is_empty(), "RungeKutta32Solver(): outputIndices must be non-empty");
+    DebugCheck(arma::any(outputIndices != arma::unique(outputIndices)), "RungeKutta32Solver(): outputIndices must only contain unique elements");
+
+    // Initialise
+    SetTimeInterval(initialTime, finalTime);
+    SetStepSize(0.01);
+    mpODESystem = &anODESystem;
+    mpState = new arma::vec(initialState);
+    mATol = ATol;
+    mRTol = RTol;
+    mOutputFileName = outputFileName;
+    mSaveGap = saveGap;
+    mPrintGap = printGap;
+    mOutputIndices = outputIndices;
 }
 
 // Destructor

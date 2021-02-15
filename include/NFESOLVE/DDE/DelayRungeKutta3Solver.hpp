@@ -19,6 +19,17 @@ class DelayRungeKutta3Solver : public DelayRungeKuttaSolver
         const int saveGap=1,
         const int printGap=1);
 
+    // Constructor
+    DelayRungeKutta3Solver(DDEInterface& aDDESystem,
+	const arma::vec& initialState, const arma::vec& delays, const int numDelayEqs,
+        const double initialTime,
+	const double finalTime,
+        const double stepSize,
+	const std::string outputFileName,
+        const int saveGap,
+        const int printGap,
+    const arma::uvec& outputIndices);
+
     // Solution
     void Solve();
 

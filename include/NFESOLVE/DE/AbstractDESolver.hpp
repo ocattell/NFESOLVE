@@ -67,6 +67,9 @@ protected:
 	//! Print every printGap iterations
 	int mPrintGap;
 
+	//! Vector of variable indices to output
+	arma::uvec mOutputIndices;
+
 	//! Output file name
 	std::string mOutputFileName;
 };
