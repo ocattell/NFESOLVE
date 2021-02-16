@@ -167,8 +167,7 @@ void AbstractDESolver::SetSaveGap(const int saveGap)
     mSaveGap = saveGap;
 }
 
-void AbstractDESolver::
-SetOutputFileName(const std::string outputFileName)
+void AbstractDESolver::SetOutputFileName(const std::string outputFileName)
 {
     mOutputFileName = outputFileName;
 }
