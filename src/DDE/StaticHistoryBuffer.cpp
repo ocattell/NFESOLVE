@@ -39,14 +39,14 @@ arma::vec StaticHistoryBuffer::ComputeDelayState(double time) const
 	arma::vec delayState(mSysSize);
 	int nearestInd = arma::index_min(arma::abs(mTimeBuffer - time));
 
-	if (fabs(mTimeBuffer(nearestInd) - time) <= 1e-12)
+	if (fabs(mTimeBuffer(nearestInd) - time) <= 1e-10)
 	{
 		delayState = mSolutionBuffer.col(nearestInd);
 	}
 	else
 	{
         int lowerInd = nearestInd;
-		if (mTimeBuffer(lowerInd) == 0 && mTimeBuffer(mColStart) <= 1e-12 )
+		if (mTimeBuffer(lowerInd) == 0 && mTimeBuffer(mColStart) <= 1e-10 )
 		{
 			lowerInd = mColStart;
 		}
@@ -59,7 +59,7 @@ arma::vec StaticHistoryBuffer::ComputeDelayState(double time) const
 		int upperInd = (lowerInd + 1) % mBufferLength;
 
 		double h = mTimeBuffer(upperInd) - mTimeBuffer(lowerInd);
-        DebugCheck(h<=1e-13, "StaticHistoryBuffer: ComputeDelayState(): h too small");
+        	DebugCheck(h<=1e-13, "StaticHistoryBuffer: ComputeDelayState(double): Consecutive time buffer values are the same");
 		double ht = time - mTimeBuffer(lowerInd);
 		double theta = ht/h;
 
@@ -74,14 +74,14 @@ double StaticHistoryBuffer::ComputeDelayState(double time, arma::uword solIndex)
 	double delayState;
 	int nearestInd = arma::index_min(arma::abs(mTimeBuffer - time));
 
-	if (fabs(mTimeBuffer(nearestInd) - time) <= 1e-12)
+	if (fabs(mTimeBuffer(nearestInd) - time) <= 1e-10)
 	{
 		delayState = mSolutionBuffer(solIndex, nearestInd);
 	}
 	else
 	{
-        int lowerInd = nearestInd;
-		if (mTimeBuffer(lowerInd) == 0 && mTimeBuffer(mColStart) <= 1e-12)
+        	int lowerInd = nearestInd;
+		if (mTimeBuffer(lowerInd) == 0 && mTimeBuffer(mColStart) <= 1e-10)
 		{
 			lowerInd = mColStart;
 		}
@@ -93,7 +93,7 @@ double StaticHistoryBuffer::ComputeDelayState(double time, arma::uword solIndex)
 		int upperInd = (lowerInd + 1) % mBufferLength;
 
 		double h = mTimeBuffer(upperInd) - mTimeBuffer(lowerInd);
-        DebugCheck(h<=1e-13, "StaticHistoryBuffer: ComputeDelayState(): h too small");
+        	DebugCheck(h<=1e-13, "StaticHistoryBuffer: ComputeDelayState(double, arma::uword): Consecutive time buffer values are the same");
 		double ht = time - mTimeBuffer(lowerInd);
 		double theta = ht / h;
 
@@ -108,14 +108,15 @@ arma::vec StaticHistoryBuffer::ComputeDelayState(double time, arma::uvec solIndi
 	arma::vec delayState;
 	arma::uword nearestInd = arma::index_min(arma::abs(mTimeBuffer - time));
 
-	if (fabs(mTimeBuffer(nearestInd) - time) <= 1e-12)
+	if (fabs(mTimeBuffer(nearestInd) - time) <= 1e-10)
 	{
-        delayState = mSolutionBuffer.col(nearestInd);
-		delayState = delayState.elem(solIndices);	}
+	        delayState = mSolutionBuffer.col(nearestInd);
+		delayState = delayState.elem(solIndices);
+	}
 	else
 	{
 		arma::uword lowerInd = nearestInd;
-        if (mTimeBuffer(lowerInd) == 0 && mTimeBuffer(mColStart) <= 1e-12)
+ 	        if (mTimeBuffer(lowerInd) == 0 && mTimeBuffer(mColStart) <= 1e-10)
 		{
 			lowerInd = mColStart;
 		}
@@ -126,8 +127,8 @@ arma::vec StaticHistoryBuffer::ComputeDelayState(double time, arma::uvec solIndi
 		}
 		int upperInd = (lowerInd + 1) % mBufferLength;
 
-        double h = mTimeBuffer(upperInd) - mTimeBuffer(lowerInd);
-        DebugCheck(h<=1e-13, "StaticHistoryBuffer: ComputeDelayState(): h too small");
+        	double h = mTimeBuffer(upperInd) - mTimeBuffer(lowerInd);
+       	 	DebugCheck(h<=1e-13, "StaticHistoryBuffer: ComputeDelayState(double, arma::uvec): Consecutive time buffer values are the same");
 		double ht = time - mTimeBuffer(lowerInd);
 		double theta = ht / h;
 
